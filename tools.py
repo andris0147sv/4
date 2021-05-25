@@ -14,7 +14,6 @@ class Probe:
     '''
     Класс для хранения временного сигнала в датчике.
     '''
-
     def __init__(self, position: int, maxTime: int):
         '''
         position - положение датчика (номер ячейки).
@@ -99,7 +98,7 @@ class AnimateFieldDisplay:
         '''
         # Отобразить положение датчиков
         self._ax.plot([i * self.dx for i in probesPos], [0] * len(probesPos),
-                      self._probeStyle)
+                       self._probeStyle)
 
     def drawSources(self, sourcesPos: List[int]):
         '''
@@ -160,7 +159,7 @@ def showProbeSignals(probes: List[Probe], minYSize: float, maxYSize: float,
     # Вывод сигналов в окно
     for probe in probes:
         if probe == probes[1]:
-            probe.E[200:] = 0
+            probe.E[250:] = 0
             ax.plot(t, probe.E)
         else:
             ax.plot(t, probe.E)
@@ -172,9 +171,9 @@ def showProbeSignals(probes: List[Probe], minYSize: float, maxYSize: float,
     # Показать окно с графиками
     pylab.show()
 
-
-def Spectrum(probes: List[Probe], maxTime: int, dt: float,
-             Fmin: float, Fmax: float):
+        
+def Spectrum(probes: List[Probe], maxTime:int, dt: float,
+                            Fmin: float, Fmax: float):
     '''
     Расчет спектров падающего и отраженного полей
     Расчет коэффициента отражения в зависимости от частоты
@@ -185,10 +184,10 @@ def Spectrum(probes: List[Probe], maxTime: int, dt: float,
     size = 2 ** 16
     df = 1 / (size * dt)
     f = numpy.arange(-size / 2 * df, size / 2 * df, df)
-
+    
     # Расчет спектра падающего поля
     fall = numpy.zeros(maxTime)
-    fall[:200] = probes[1].E[:200]
+    fall[:250] = probes[1].E[:250]
     fall_spectrum = numpy.abs(fft.fft(fall, size))
     fall_spectrum = fft.fftshift(fall_spectrum)
 
@@ -199,12 +198,12 @@ def Spectrum(probes: List[Probe], maxTime: int, dt: float,
     # Построение графиков
     fig, ax = pylab.subplots()
     ax.plot(f * 1e-9, fall_spectrum / numpy.max(fall_spectrum))
-    ax.plot(f * 1e-9, scattered_spectrum / numpy.max(scattered_spectrum))
+    ax.plot(f * 1e-9, scattered_spectrum / numpy.max(fall_spectrum))
     ax.grid()
-    ax.set_xlim(0, 15e9 * 1e-9)
+    ax.set_xlim(0, 5e9 * 1e-9)
     ax.set_xlabel('f, ГГц')
     ax.set_ylabel(r'$\frac{S}{S_max}}$')
-    ax.legend(['Спектр пад. сигнала', 'Спектр отр. сигнала'], loc=1)
+    ax.legend(['Спектр пад. сигнала','Спектр отр. сигнала'], loc=1)
     pylab.show()
 
     fig, ax = pylab.subplots()
